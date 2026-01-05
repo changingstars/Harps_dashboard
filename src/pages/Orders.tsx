@@ -21,7 +21,7 @@ export default function Orders() {
             .from('orders')
             .select(`
                 *,
-                profiles:user_id (company_name, tax_id, email, address, city, zip, phone),
+                profiles (company_name, tax_id, email),
                 order_items (
                     *,
                     products (name, image_url)
@@ -32,6 +32,7 @@ export default function Orders() {
 
         if (error) {
             console.error('Error fetching orders:', error)
+            alert('Hiba történt a rendelések betöltésekor: ' + error.message)
         } else {
             setOrders(data || [])
         }

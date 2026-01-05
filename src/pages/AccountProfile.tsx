@@ -7,7 +7,14 @@ export default function AccountProfile() {
     const [saving, setSaving] = useState(false);
     const [profile, setProfile] = useState<any>(null);
     const [addresses, setAddresses] = useState<any[]>([]);
-    const [newAddress, setNewAddress] = useState({ site_name: '', address: '', contact_name: '', is_default: false });
+    const [newAddress, setNewAddress] = useState({
+        site_name: '',
+        address: '',
+        contact_name: '',
+        contact_email: '',
+        contact_phone: '',
+        is_default: false
+    });
     const [isAddingAddress, setIsAddingAddress] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -63,6 +70,10 @@ export default function AccountProfile() {
             setMessage({ type: 'error', text: 'A telephely neve és címe kötelező!' });
             return;
         }
+        if (newAddress.contact_name && !newAddress.contact_email) {
+            setMessage({ type: 'error', text: 'Ha megad kapcsolattartót, az email cím kötelező!' });
+            return;
+        }
 
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
@@ -76,7 +87,14 @@ export default function AccountProfile() {
         if (error) {
             setMessage({ type: 'error', text: 'Hiba a hozzáadáskor: ' + error.message });
         } else {
-            setNewAddress({ site_name: '', address: '', contact_name: '', is_default: false });
+            setNewAddress({
+                site_name: '',
+                address: '',
+                contact_name: '',
+                contact_email: '',
+                contact_phone: '',
+                is_default: false
+            });
             setIsAddingAddress(false);
             fetchProfileAndAddresses();
             setMessage({ type: 'success', text: 'Telephely sikeresen hozzáadva!' });
@@ -177,27 +195,53 @@ export default function AccountProfile() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input
                                 type="text"
-                                placeholder="Telephely neve (pl. Raktár 1)"
+                                placeholder="Telephely neve (pl. Raktár 1) *"
                                 value={newAddress.site_name}
                                 onChange={e => setNewAddress({ ...newAddress, site_name: e.target.value })}
-                                className="px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-sempermed-green outline-none"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Kapcsolattartó (Opcionális)"
-                                value={newAddress.contact_name}
-                                onChange={e => setNewAddress({ ...newAddress, contact_name: e.target.value })}
                                 className="px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-sempermed-green outline-none"
                             />
                             <div className="md:col-span-2">
                                 <input
                                     type="text"
-                                    placeholder="Pontos cím (Irsz, Város, Utca, Házszám)"
+                                    placeholder="Pontos cím (Irsz, Város, Utca, Házszám) *"
                                     value={newAddress.address}
                                     onChange={e => setNewAddress({ ...newAddress, address: e.target.value })}
                                     className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-sempermed-green outline-none"
                                 />
                             </div>
+
+                            {/* Contact Person Fields */}
+                            <div className="md:col-span-2 bg-white p-4 rounded-xl border border-gray-200 mt-2">
+                                <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                    <User size={16} className="text-gray-400" />
+                                    Kapcsolattartó Adatai
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Név"
+                                        value={newAddress.contact_name}
+                                        onChange={e => setNewAddress({ ...newAddress, contact_name: e.target.value })}
+                                        className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sempermed-green outline-none text-sm"
+                                    />
+                                    <input
+                                        type="email"
+                                        placeholder="Email (pl. kovacs.bela@ceg.hu) *"
+                                        value={newAddress.contact_email}
+                                        onChange={e => setNewAddress({ ...newAddress, contact_email: e.target.value })}
+                                        className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sempermed-green outline-none text-sm"
+                                    />
+                                    <input
+                                        type="tel"
+                                        placeholder="Telefon (Opcionális)"
+                                        value={newAddress.contact_phone}
+                                        onChange={e => setNewAddress({ ...newAddress, contact_phone: e.target.value })}
+                                        className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sempermed-green outline-none text-sm"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-400 mt-2 italic">* Ha megad kapcsolattartót, az email cím kötelező.</p>
+                            </div>
+
                         </div>
                         <div className="flex justify-end gap-3 mt-4">
                             <button onClick={() => setIsAddingAddress(false)} className="px-4 py-2 text-gray-500 font-medium hover:bg-gray-200 rounded-lg transition-colors">Mégse</button>
@@ -220,7 +264,14 @@ export default function AccountProfile() {
                                         {addr.is_default && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">Alapértelmezett</span>}
                                     </div>
                                     <p className="text-gray-600">{addr.address}</p>
-                                    {addr.contact_name && <p className="text-sm text-gray-400 mt-1 flex items-center gap-1"><User size={14} /> {addr.contact_name}</p>}
+
+                                    {(addr.contact_name || addr.contact_email) && (
+                                        <div className="mt-2 pl-3 border-l-2 border-gray-100">
+                                            {addr.contact_name && <p className="text-sm font-bold text-gray-700">{addr.contact_name}</p>}
+                                            {addr.contact_email && <p className="text-sm text-gray-500">{addr.contact_email}</p>}
+                                            {addr.contact_phone && <p className="text-sm text-gray-400">{addr.contact_phone}</p>}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button onClick={() => deleteAddress(addr.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">

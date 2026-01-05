@@ -16,6 +16,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminSupport from './pages/admin/AdminSupport'
+import AdminEmailTemplates from './pages/admin/AdminEmailTemplates'
 
 function App() {
   return (
@@ -38,10 +39,12 @@ function App() {
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminGuard />}>
               <Route element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="support" element={<AdminSupport />} />
+                <Route path="email-templates" element={<AdminEmailTemplates />} />
               </Route>
             </Route>
           </Route>

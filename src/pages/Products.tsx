@@ -133,6 +133,7 @@ export default function Products() {
 
             // 3. Trigger Email
             if (status === 'pending') {
+                // 1. User Confirmation
                 supabase.functions.invoke('send-email', {
                     body: {
                         type: 'new_order',
@@ -144,7 +145,22 @@ export default function Products() {
                         }
                     }
                 }).then(({ error }) => {
-                    if (error) console.error('Error sending email:', error);
+                    if (error) console.error('Error sending user email:', error);
+                });
+
+                // 2. Admin Notification (with Excel)
+                supabase.functions.invoke('send-email', {
+                    body: {
+                        type: 'new_order_admin',
+                        data: {
+                            order_number: orderNumber,
+                            total_amount: total,
+                            user_email: user.email,
+                            order_id: orderData.id
+                        }
+                    }
+                }).then(({ error }) => {
+                    if (error) console.error('Error sending admin email:', error);
                 });
             }
 

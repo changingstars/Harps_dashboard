@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Package, LogOut, Menu, X, HelpCircle } from 'lucide-react';
-import { supabase } from '../supabaseClient';
+import { LayoutDashboard, ShoppingBag, Package, Menu, X, LogOut, MessageSquare, Variable } from 'lucide-react';
 import { SempermedLogo } from './SempermedLogo';
+import { supabase } from '../supabaseClient';
 
 export default function AdminLayout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -27,7 +27,8 @@ export default function AdminLayout() {
         { path: '/admin', icon: LayoutDashboard, label: 'Áttekintés' },
         { path: '/admin/orders', icon: ShoppingBag, label: 'Rendelések' },
         { path: '/admin/products', icon: Package, label: 'Termékek' },
-        { path: '/admin/support', icon: HelpCircle, label: 'Támogatás' },
+        { path: '/admin/support', icon: MessageSquare, label: 'Hibajegyek' },
+        { path: '/admin/email-templates', icon: Variable, label: 'Email Sablonok' },
     ];
 
     return (
