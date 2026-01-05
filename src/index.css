@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Montserrat', sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-sempermed-green text-white px-6 py-3 rounded-full font-semibold border border-transparent transition-all duration-300 shadow-md hover:bg-sempermed-green-dark hover:-translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent text-sempermed-green px-6 py-3 rounded-full font-semibold border-2 border-sempermed-green transition-all duration-300 hover:bg-[#F0FDFA] hover:text-sempermed-green-dark hover:border-sempermed-green-dark;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
