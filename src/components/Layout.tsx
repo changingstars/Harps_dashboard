@@ -79,12 +79,7 @@ export default function Layout() {
                 </nav>
 
                 <div className="p-4 mt-auto">
-                    <button
-                        className="flex items-center space-x-4 px-6 py-4 w-full text-gray-400 hover:text-sempermed-green-dark transition-colors rounded-full hover:bg-gray-50"
-                    >
-                        <ArrowLeft size={22} />
-                        <span className="font-medium">Vissza a főoldalra</span>
-                    </button>
+
                     <button
                         onClick={handleLogout}
                         className="flex items-center space-x-4 px-6 py-4 w-full text-[#ef4444] hover:bg-[#ef4444]/10 transition-colors rounded-full mt-2"

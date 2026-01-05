@@ -40,7 +40,10 @@ export default function AdminLayout() {
             >
                 <div className="p-6 flex items-center justify-between">
                     {isSidebarOpen ? (
-                        <SempermedLogo className="h-8" />
+                        <div className='flex flex-col items-start'>
+                            <SempermedLogo className="h-10" />
+                            <span className="text-[10px] font-bold text-sempermed-gold tracking-[0.2em] uppercase mt-1 leading-none ml-1">Admin Panel</span>
+                        </div>
                     ) : (
                         <div className="w-8 h-8 bg-sempermed-green rounded-full mx-auto" />
                     )}
