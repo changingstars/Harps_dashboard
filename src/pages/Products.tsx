@@ -15,6 +15,8 @@ export default function Products() {
     const [lastOrderStatus, setLastOrderStatus] = useState<'pending' | 'draft'>('pending')
     const [selectedAddressId, setSelectedAddressId] = useState<string>('')
     const [addresses, setAddresses] = useState<any[]>([])
+    const [warehouseAddress, setWarehouseAddress] = useState<string>('')
+    const [orderComment, setOrderComment] = useState('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,6 +65,18 @@ export default function Products() {
                     if (defaultAddr) setSelectedAddressId(defaultAddr.id);
                 }
             }
+
+            // Fetch Warehouse Address
+            const { data: settingsData } = await supabase
+                .from('app_settings')
+                .select('value')
+                .eq('key', 'warehouse_address')
+                .single();
+
+            if (settingsData) {
+                setWarehouseAddress(settingsData.value);
+            }
+
             setLoading(false)
         }
         fetchData()
@@ -104,7 +118,19 @@ export default function Products() {
                 return;
             }
 
-            const selectedAddress = addresses.find(a => a.id === selectedAddressId);
+            let selectedAddress;
+            if (selectedAddressId === 'warehouse_pickup') {
+                selectedAddress = {
+                    site_name: 'Raktári Felvétel',
+                    address: warehouseAddress,
+                    contact_name: user?.user_metadata?.full_name || 'Partner',
+                    contact_phone: user?.user_metadata?.phone || '',
+                    contact_email: user?.email
+                };
+            } else {
+                selectedAddress = addresses.find(a => a.id === selectedAddressId);
+            }
+
             const orderNumber = `ORD-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
 
             const { data: orderData, error: orderError } = await supabase
@@ -114,7 +140,8 @@ export default function Products() {
                     total_amount: total,
                     status: status,
                     order_number: orderNumber,
-                    shipping_address: selectedAddress || null
+                    shipping_address: selectedAddress || null,
+                    comment: orderComment
                 })
                 .select()
                 .single();
@@ -146,6 +173,7 @@ export default function Products() {
                 });
             }
 
+            setOrderComment('');
             clearCart();
             setLastOrderStatus(status);
             setShowSuccessModal(true);
@@ -262,7 +290,7 @@ export default function Products() {
                 </div>
 
                 {/* Cart Sidebar */}
-                <div className="w-96 flex-none bg-white rounded-[30px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
+                <div className="w-[440px] flex-none bg-white rounded-[30px] shadow-sm border border-gray-100 flex flex-col overflow-hidden">
                     <div className="p-6 bg-gray-50 border-b border-gray-100">
                         <h3 className="font-bold text-lg text-sempermed-text flex items-center gap-2">
                             <ShoppingCart size={20} />
@@ -335,6 +363,11 @@ export default function Products() {
                                             {addr.site_name} - {addr.address}
                                         </option>
                                     ))}
+                                    {warehouseAddress && (
+                                        <option value="warehouse_pickup" className="font-bold text-sempermed-green">
+                                            🏢 Raktári felvétel ({warehouseAddress})
+                                        </option>
+                                    )}
                                 </select>
                             ) : (
                                 <div className="text-sm text-red-500 bg-red-50 p-3 rounded-lg border border-red-100">
@@ -347,6 +380,18 @@ export default function Products() {
                                     </button>
                                 </div>
                             )}
+                        </div>
+
+                        {/* Comment Section */}
+                        <div className="mb-4">
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Megjegyzés</label>
+                            <textarea
+                                value={orderComment}
+                                onChange={(e) => setOrderComment(e.target.value)}
+                                placeholder="Egyéb kérés, megjegyzés a futárnak..."
+                                className="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-sempermed-green focus:outline-none resize-none"
+                                rows={3}
+                            />
                         </div>
 
                         <div className="flex justify-between items-end mb-4">

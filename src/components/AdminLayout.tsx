@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Package, Menu, X, LogOut, MessageSquare, Variable } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Package, Menu, X, LogOut, MessageSquare, Variable, Settings } from 'lucide-react';
 import { SempermedLogo } from './SempermedLogo';
 import { supabase } from '../supabaseClient';
 
@@ -29,6 +29,7 @@ export default function AdminLayout() {
         { path: '/admin/products', icon: Package, label: 'Termékek' },
         { path: '/admin/support', icon: MessageSquare, label: 'Hibajegyek' },
         { path: '/admin/email-templates', icon: Variable, label: 'Email Sablonok' },
+        { path: '/admin/settings', icon: Settings, label: 'Beállítások' },
     ];
 
     return (

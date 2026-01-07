@@ -17,6 +17,7 @@ import AdminOrders from './pages/admin/AdminOrders'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminSupport from './pages/admin/AdminSupport'
 import AdminEmailTemplates from './pages/admin/AdminEmailTemplates'
+import AdminSettings from './pages/admin/AdminSettings'
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="support" element={<AdminSupport />} />
                 <Route path="email-templates" element={<AdminEmailTemplates />} />
+                <Route path="settings" element={<AdminSettings />} />
               </Route>
             </Route>
           </Route>
